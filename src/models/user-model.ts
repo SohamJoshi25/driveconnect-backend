@@ -1,17 +1,7 @@
 import { UUID } from "crypto";
-import { url } from "inspector";
-import mongoose, { Document, Schema, Model } from "mongoose";
-import { Url } from "url";
+import mongoose, { Document, Schema, Model, ObjectId, Types } from "mongoose";
 
-// "data": {
-//     "id": "111658499613038364324",
-//     "email": "sohamjoshichinchwad@gmail.com",
-//     "verified_email": true,
-//     "name": "Soham Joshi",
-//     "given_name": "Soham",
-//     "family_name": "Joshi",
-//     "picture": "https://lh3.googleusercontent.com/a/ACg8ocLe62_9jTpfXS28XONJkQE-Z4VGMI3gp7EVbfyPWwOWZfrnris98g=s96-c"
-//   }
+import { AccountSchema, IAccount } from "./account-model.js";
 
 export interface IUser extends Document {
   _id: UUID;
@@ -22,6 +12,7 @@ export interface IUser extends Document {
   picture?: string;
   createdAt?: string;
   updatedAt?: string;
+  accounts: Types.ObjectId[];
 }
 
 export const UserSchema = new Schema<IUser>(
@@ -42,10 +33,14 @@ export const UserSchema = new Schema<IUser>(
     rootFolder: {
       type: mongoose.SchemaTypes.String,
       default: "not-assigned",
-      unique: true,
     },
     picture: {
       type: mongoose.SchemaTypes.String,
+    },
+    accounts: {
+      type: [mongoose.SchemaTypes.ObjectId],
+      ref: "Account",
+      default: [],
     },
   },
   { timestamps: true },

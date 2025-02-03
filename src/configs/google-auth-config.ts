@@ -5,7 +5,7 @@ const oauth2client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID, proces
 
 export const accountAuthUrl = oauth2client.generateAuthUrl({
   access_type: "offline",
-  scope: ["https://www.googleapis.com/auth/drive.appdata"],
+  scope: ["https://www.googleapis.com/auth/drive.appdata", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"],
   prompt: "consent",
 });
 

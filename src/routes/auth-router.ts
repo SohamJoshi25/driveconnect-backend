@@ -26,4 +26,10 @@ router.get("/google/callback", async (request: Request, response: Response): Pro
   return response.status(500).json({ message: "ERROR: Session missing from Google callback" });
 });
 
+//TODO: DELETE USER in new Router File
+
+//TODO: DELETE ACCOUNT in new Router File
+
+//TODO: USER ROUTES ALL POSSIBLE - Fetch a User, Fetch Users Drive Details, Fetch all RefreshTokens , etc
+
 export default router;
