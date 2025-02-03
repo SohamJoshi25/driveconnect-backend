@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/SohamJoshi25/driveconnect-backend#readme",
   "dependencies": {
+    "@types/mongoose": "^5.11.97",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -29,8 +30,6 @@
     "googleapis": "^144.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.5",
-    "passport": "^0.7.0",
-    "passport-google-oauth20": "^2.0.0",
     "prettier": "^3.4.2",
     "socket.io": "^4.8.1"
   },
@@ -38,8 +37,8 @@
     "@types/cookie-parser": "^1.4.8",
     "@types/express": "^5.0.0",
     "@types/express-session": "^1.18.1",
+    "@types/jsonwebtoken": "^9.0.8",
     "@types/node": "^22.10.7",
-    "@types/passport": "^1.0.17",
     "tsc-watch": "^6.2.1",
     "typescript": "^5.7.3"
   }
