@@ -1,10 +1,11 @@
 import { UUID } from "crypto";
 import { url } from "inspector";
-import mongoose, { Document, Schema, Model } from "mongoose";
+import mongoose, { Document, Schema, Model, Types } from "mongoose";
 
 export interface IAccount extends Document {
   _id: UUID;
   email: String;
+  userId: Types.ObjectId;
   accessToken: String;
   refreshToken: String;
   scope: String;
@@ -19,6 +20,11 @@ export const AccountSchema = new Schema<IAccount>(
       type: mongoose.SchemaTypes.String,
       required: true,
       unique: true,
+    },
+    userId: {
+      type: mongoose.SchemaTypes.ObjectId,
+      required: true,
+      ref: "User",
     },
     accessToken: {
       type: mongoose.SchemaTypes.String,

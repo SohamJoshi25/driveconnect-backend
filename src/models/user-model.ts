@@ -12,7 +12,6 @@ export interface IUser extends Document {
   picture?: string;
   createdAt?: string;
   updatedAt?: string;
-  accounts: Types.ObjectId[];
 }
 
 export const UserSchema = new Schema<IUser>(
@@ -36,11 +35,6 @@ export const UserSchema = new Schema<IUser>(
     },
     picture: {
       type: mongoose.SchemaTypes.String,
-    },
-    accounts: {
-      type: [mongoose.SchemaTypes.ObjectId],
-      ref: "Account",
-      default: [],
     },
   },
   { timestamps: true },

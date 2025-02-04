@@ -98,12 +98,8 @@ export const accountCallback = async (request: Request, response: Response): Pro
     if (!user) {
       return response.status(502).json({ message: "User not found in Database" });
     }
-    const account = new AccountModel({ email: data.email, accessToken: tokens.access_token, refreshToken: tokens.refresh_token, expiresAt: tokens.expiry_date, scope: tokens.scope });
+    const account = new AccountModel({ email: data.email, accessToken: tokens.access_token, refreshToken: tokens.refresh_token, expiresAt: tokens.expiry_date, scope: tokens.scope, userId: user._id });
     await account.save();
-
-    user.accounts.push(new mongoose.Types.ObjectId(account._id));
-
-    await user.save();
 
     return response.status(200).json({ message: "success" });
   } catch (error: unknown) {
