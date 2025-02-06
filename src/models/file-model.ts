@@ -2,19 +2,19 @@ import { UUID } from "crypto";
 import { url } from "inspector";
 import mongoose, { Document, Schema, Model, Types } from "mongoose";
 
-export interface IAccount extends Document {
+export interface IFile extends Document {
   _id: UUID;
   email: String;
   userId: Types.ObjectId;
   accessToken: String;
   refreshToken: String;
-  scope: String[];
+  scope: String;
   expiresAt?: Number;
   createdAt?: string;
   updatedAt?: string;
 }
 
-export const AccountSchema = new Schema<IAccount>(
+export const FileSchema = new Schema<IFile>(
   {
     email: {
       type: mongoose.SchemaTypes.String,
@@ -35,9 +35,8 @@ export const AccountSchema = new Schema<IAccount>(
       required: true,
     },
     scope: {
-      type: [String],
+      type: mongoose.SchemaTypes.String,
       required: true,
-      default: [],
     },
     expiresAt: {
       type: mongoose.SchemaTypes.Number,
@@ -47,4 +46,4 @@ export const AccountSchema = new Schema<IAccount>(
   { timestamps: true },
 );
 
-export const AccountModel: Model<IAccount> = mongoose.model("Account", AccountSchema);
+export const AccountModel: Model<IFile> = mongoose.model("Account", FileSchema);

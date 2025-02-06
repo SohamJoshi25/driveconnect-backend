@@ -71,7 +71,7 @@ export const userCallback = async (request: Request, response: Response): Promis
     const token = createJWT({ _id: user._id });
     return response.status(200).json({ message: "success", token: token });
   } catch (error) {
-    return response.status(500).json({ message: "Error", error: error });
+    return response.status(500).json({ message: "Error", error: JSON.stringify(error) });
   }
 };
 
@@ -98,15 +98,23 @@ export const accountCallback = async (request: Request, response: Response): Pro
     if (!user) {
       return response.status(502).json({ message: "User not found in Database" });
     }
-    const account = new AccountModel({ email: data.email, accessToken: tokens.access_token, refreshToken: tokens.refresh_token, expiresAt: tokens.expiry_date, scope: tokens.scope, userId: user._id });
-    await account.save();
 
-    return response.status(200).json({ message: "success" });
-  } catch (error: unknown) {
-    if ((error as any).code == 11000) {
-      return response.status(409).json({ message: "Email already registered in Drive", email: (error as any).keyValue.email });
+    const prevAccount = await AccountModel.findOne({ email: data.email });
+
+    if (!prevAccount) {
+      const account = new AccountModel({ email: data.email, accessToken: tokens.access_token, refreshToken: tokens.refresh_token, expiresAt: tokens.expiry_date, scope: tokens.scope?.split(" "), userId: user._id });
+      await account.save();
     } else {
-      return response.status(500).json({ message: "Error", error: error });
+      if (prevAccount.userId.toString() === request.session.userId) {
+        await AccountModel.findByIdAndUpdate(prevAccount._id, { email: data.email, accessToken: tokens.access_token, refreshToken: tokens.refresh_token, expiresAt: tokens.expiry_date, scope: tokens.scope?.split(" "), userId: user._id });
+        return response.status(200).json({ message: "Updated Accound" });
+      } else {
+        return response.status(409).json({ message: "Account already registered in Drive", email: data.email });
+      }
     }
+
+    return response.status(200).json({ message: "Added Account" });
+  } catch (error: unknown) {
+    return response.status(500).json({ message: "Error", error: error });
   }
 };
