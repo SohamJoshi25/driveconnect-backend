@@ -1,49 +1,58 @@
 import { UUID } from "crypto";
-import { url } from "inspector";
 import mongoose, { Document, Schema, Model, Types } from "mongoose";
+import { ChunkSchema, IChunk } from "./chunk-model.js";
 
 export interface IFile extends Document {
   _id: UUID;
-  email: String;
   userId: Types.ObjectId;
-  accessToken: String;
-  refreshToken: String;
-  scope: String;
-  expiresAt?: Number;
-  createdAt?: string;
-  updatedAt?: string;
+  name: String;
+  extention: String;
+  size: Number;
+  chunks: IChunk[];
+  chunkSize: Number;
+  downloadedAt?: String;
+  createdAt?: String;
+  updatedAt?: String;
 }
 
 export const FileSchema = new Schema<IFile>(
   {
-    email: {
-      type: mongoose.SchemaTypes.String,
-      required: true,
-      unique: true,
-    },
     userId: {
       type: mongoose.SchemaTypes.ObjectId,
       required: true,
       ref: "User",
     },
-    accessToken: {
+    name: {
       type: mongoose.SchemaTypes.String,
       required: true,
     },
-    refreshToken: {
+    extention: {
       type: mongoose.SchemaTypes.String,
       required: true,
     },
-    scope: {
-      type: mongoose.SchemaTypes.String,
-      required: true,
-    },
-    expiresAt: {
+    size: {
       type: mongoose.SchemaTypes.Number,
       required: true,
+    },
+    chunks: {
+      type: [ChunkSchema],
+      required: true,
+      default: [],
+    },
+    chunkSize: {
+      type: mongoose.SchemaTypes.Number,
+      required: true,
+      default: 0,
+    },
+    downloadedAt: {
+      type: mongoose.SchemaTypes.Date,
+      required: true,
+      default: () => {
+        return new Date();
+      },
     },
   },
   { timestamps: true },
 );
 
-export const AccountModel: Model<IFile> = mongoose.model("Account", FileSchema);
+export const AccountModel: Model<IFile> = mongoose.model("File", FileSchema);

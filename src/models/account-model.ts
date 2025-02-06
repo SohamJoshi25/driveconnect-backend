@@ -1,5 +1,4 @@
 import { UUID } from "crypto";
-import { url } from "inspector";
 import mongoose, { Document, Schema, Model, Types } from "mongoose";
 
 export interface IAccount extends Document {

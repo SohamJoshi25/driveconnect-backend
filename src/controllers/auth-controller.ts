@@ -107,7 +107,7 @@ export const accountCallback = async (request: Request, response: Response): Pro
     } else {
       if (prevAccount.userId.toString() === request.session.userId) {
         await AccountModel.findByIdAndUpdate(prevAccount._id, { email: data.email, accessToken: tokens.access_token, refreshToken: tokens.refresh_token, expiresAt: tokens.expiry_date, scope: tokens.scope?.split(" "), userId: user._id });
-        return response.status(200).json({ message: "Updated Accound" });
+        return response.status(200).json({ message: "Updated Account" });
       } else {
         return response.status(409).json({ message: "Account already registered in Drive", email: data.email });
       }
