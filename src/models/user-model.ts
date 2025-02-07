@@ -8,7 +8,7 @@ export interface IUser extends Document {
   googleId: string;
   name: string;
   email: string;
-  rootFolder?: string;
+  rootFolderId?: string;
   picture?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -29,9 +29,9 @@ export const UserSchema = new Schema<IUser>(
       required: true,
       unique: true,
     },
-    rootFolder: {
-      type: mongoose.SchemaTypes.String,
-      default: "not-assigned",
+    rootFolderId: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "Folder",
     },
     picture: {
       type: mongoose.SchemaTypes.String,

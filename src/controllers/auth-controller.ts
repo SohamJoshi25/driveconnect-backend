@@ -15,6 +15,7 @@ import { createJWT, verifyJWT } from "../utils/jwt-util.js";
 
 //Packages
 import url from "url";
+import { FolderModel } from "../models/folder-model.js";
 
 export const userLogin = async (request: Request, response: Response): Promise<any> => {
   try {
@@ -56,20 +57,42 @@ export const userCallback = async (request: Request, response: Response): Promis
     const oauth2 = google.oauth2({ version: "v2", auth: oauth2client });
     const { data } = await oauth2.userinfo.get(); // Fetch user info
 
-    const userData = {
-      googleId: data.id!,
-      email: data.email!,
-      name: data.name!,
-      picture: data.picture ?? null,
-    };
+    const user = await UserModel.findOne({ email: data.email });
 
-    if (data.picture) {
-      userData.picture = data.picture;
+    if (user) {
+      user.googleId = data.id!;
+      user.name = data.name!;
+      user.picture = data.picture!;
+      const token = createJWT({ _id: user._id });
+      return response.status(200).json({ message: "success", token: token });
+    } else {
+      const userData = {
+        googleId: data.id!,
+        email: data.email!,
+        name: data.name!,
+        picture: data.picture ?? null,
+      };
+
+      const newUser = new UserModel(userData);
+
+      const folderData = {
+        userId: newUser._id,
+        parentFolderId: "NA",
+        name: "root",
+        size: 0,
+      };
+
+      const rootFolder = new FolderModel(folderData);
+
+      await newUser.save();
+      await rootFolder.save();
+
+      newUser.rootFolderId = rootFolder._id;
+      newUser.save();
+      const token = createJWT({ _id: newUser._id });
+
+      return response.status(200).json({ message: "success", token: token });
     }
-
-    const user = await UserModel.findOneAndReplace({ email: data.email }, userData, { upsert: true, new: true });
-    const token = createJWT({ _id: user._id });
-    return response.status(200).json({ message: "success", token: token });
   } catch (error) {
     return response.status(500).json({ message: "Error", error: JSON.stringify(error) });
   }

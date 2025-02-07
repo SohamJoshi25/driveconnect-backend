@@ -1,7 +1,10 @@
+import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 
-export const createJWT = (body: any, expiresIn?: number): String => {
-  const expiresInTime = expiresIn ?? 3600 * 24;
+dotenv.config();
+
+export const createJWT = (body: any, expiresIn?: number): string => {
+  const expiresInTime = expiresIn ?? 86400;
   const token = jwt.sign(body, process.env.JWT_SECRET as string, { expiresIn: expiresInTime });
   return token;
 };

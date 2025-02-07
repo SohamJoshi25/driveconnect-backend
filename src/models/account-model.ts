@@ -2,12 +2,12 @@ import { UUID } from "crypto";
 import mongoose, { Document, Schema, Model, Types } from "mongoose";
 
 export interface IAccount extends Document {
-  _id: UUID;
-  email: String;
+  _id: Types.ObjectId;
+  email: string;
   userId: Types.ObjectId;
-  accessToken: String;
-  refreshToken: String;
-  scope: String[];
+  accessToken: string;
+  refreshToken: string;
+  scope: string[];
   expiresAt?: Number;
   createdAt?: string;
   updatedAt?: string;

@@ -5,6 +5,7 @@ import { IFile, FileSchema } from "./file-model.js";
 export interface IFolder extends Document {
   _id: UUID;
   userId: Types.ObjectId;
+  parentFolderId: Types.ObjectId | null;
   name: String;
   size: Number;
   subFolders: Types.ObjectId[];
@@ -20,6 +21,11 @@ export const FolderSchema = new Schema<IFolder>(
       type: mongoose.SchemaTypes.ObjectId,
       required: true,
       ref: "User",
+    },
+    parentFolderId: {
+      type: mongoose.SchemaTypes.Mixed,
+      required: true,
+      ref: "Folder",
     },
     name: {
       type: mongoose.SchemaTypes.String,

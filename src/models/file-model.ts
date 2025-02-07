@@ -5,6 +5,7 @@ import { ChunkSchema, IChunk } from "./chunk-model.js";
 export interface IFile extends Document {
   _id: UUID;
   userId: Types.ObjectId;
+  parentFolderId: Types.ObjectId;
   name: String;
   extention: String;
   size: Number;
@@ -21,6 +22,11 @@ export const FileSchema = new Schema<IFile>(
       type: mongoose.SchemaTypes.ObjectId,
       required: true,
       ref: "User",
+    },
+    parentFolderId: {
+      type: mongoose.SchemaTypes.ObjectId,
+      required: true,
+      ref: "Folder",
     },
     name: {
       type: mongoose.SchemaTypes.String,
@@ -42,7 +48,6 @@ export const FileSchema = new Schema<IFile>(
     chunkSize: {
       type: mongoose.SchemaTypes.Number,
       required: true,
-      default: 0,
     },
     downloadedAt: {
       type: mongoose.SchemaTypes.Date,
@@ -55,4 +60,4 @@ export const FileSchema = new Schema<IFile>(
   { timestamps: true },
 );
 
-export const AccountModel: Model<IFile> = mongoose.model("File", FileSchema);
+export const FileModel: Model<IFile> = mongoose.model("File", FileSchema);

@@ -2,7 +2,7 @@ import mongoose, { Document, Schema, Types } from "mongoose";
 
 export interface IChunk extends Document {
   index: Number;
-  driveLocation: String;
+  driveId: String;
   accountId: Types.ObjectId;
 }
 
@@ -12,7 +12,7 @@ export const ChunkSchema = new Schema<IChunk>(
       type: mongoose.SchemaTypes.Number,
       required: true,
     },
-    driveLocation: {
+    driveId: {
       type: mongoose.SchemaTypes.String,
       required: true,
     },
