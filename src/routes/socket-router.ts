@@ -1,5 +1,5 @@
 import { Server, DefaultEventsMap, Socket, DisconnectReason } from "socket.io";
-import { OnFileChunk, OnFileUploadEnd, OnFileUploadStart } from "../controllers/socket-controller.js";
+import { OnFileChunk, OnFileDownload, OnFileUploadEnd, OnFileUploadStart } from "../controllers/socket-controller.js";
 
 export const connectIO = (io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>) => {
   io.on("connection", (socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>) => {
@@ -10,6 +10,7 @@ export const connectIO = (io: Server<DefaultEventsMap, DefaultEventsMap, Default
     socket.on("file_upload_start", OnFileUploadStart);
     socket.on("file_chunk", OnFileChunk);
     socket.on("file_upload_end", OnFileUploadEnd);
+    socket.on("file_download_start", (d, c) => OnFileDownload(socket, d, c));
 
     socket.on("disconnect", (disconnectReason: DisconnectReason) => {
       console.log(`Client Disconnected ${socket.id}\nReason : ${disconnectReason}`);

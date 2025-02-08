@@ -3,7 +3,7 @@ import mongoose, { Document, Schema, Model, Types } from "mongoose";
 import { ChunkSchema, IChunk } from "./chunk-model.js";
 
 export interface IFile extends Document {
-  _id: UUID;
+  _id: Types.ObjectId;
   userId: Types.ObjectId;
   parentFolderId: Types.ObjectId;
   name: String;

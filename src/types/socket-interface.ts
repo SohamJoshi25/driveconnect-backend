@@ -5,14 +5,25 @@ export interface IFileUploadStartData {
   name: string;
   extention: string;
   size: number;
-  parentFolderId: Types.ObjectId;
+  parentFolderId?: Types.ObjectId;
 }
 
 export interface IFileChunkData {
   token: string;
   chunkBuffer: ArrayBuffer;
   chunkIndex: number;
-  fileId: string;
 }
 
-export interface IChunkJWT {}
+export interface IChunkJWT {
+  refresh_token_data: {
+    refresh_token: string;
+    index: number;
+    accountId: Types.ObjectId;
+  }[];
+  fileId: Types.ObjectId;
+}
+
+export interface IFileDownload {
+  token: string;
+  fileId: Types.ObjectId;
+}

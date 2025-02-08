@@ -1,8 +1,8 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
 
-export interface IChunk extends Document {
-  index: Number;
-  driveId: String;
+export interface IChunk {
+  index: number;
+  driveId: string;
   accountId: Types.ObjectId;
 }
 

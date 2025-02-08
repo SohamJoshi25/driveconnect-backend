@@ -1,14 +1,14 @@
 import { UUID } from "crypto";
-import mongoose, { Document, Schema, Model } from "mongoose";
+import mongoose, { Document, Schema, Model, Types } from "mongoose";
 
 import { AccountSchema, IAccount } from "./account-model.js";
 
 export interface IUser extends Document {
-  _id: UUID;
+  _id: Types.ObjectId;
   googleId: string;
   name: string;
   email: string;
-  rootFolderId?: string;
+  rootFolderId?: Types.ObjectId;
   picture?: string;
   createdAt?: string;
   updatedAt?: string;

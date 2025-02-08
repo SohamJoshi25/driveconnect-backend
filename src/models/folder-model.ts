@@ -3,7 +3,7 @@ import mongoose, { Document, Schema, Model, Types } from "mongoose";
 import { IFile, FileSchema } from "./file-model.js";
 
 export interface IFolder extends Document {
-  _id: UUID;
+  _id: Types.ObjectId;
   userId: Types.ObjectId;
   parentFolderId: Types.ObjectId | null;
   name: String;
