@@ -6,13 +6,13 @@ export interface IFolder extends Document {
   _id: Types.ObjectId;
   userId: Types.ObjectId;
   parentFolderId: Types.ObjectId | null;
-  name: String;
-  size: Number;
+  name: string;
+  size: number;
   subFolders: Types.ObjectId[];
   subFiles: Types.ObjectId[];
-  path: String[];
-  createdAt?: String;
-  updatedAt?: String;
+  path: string[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export const FolderSchema = new Schema<IFolder>(
@@ -58,7 +58,7 @@ export const FolderSchema = new Schema<IFolder>(
     path: {
       type: [String],
       required: true,
-      default: [],
+      default: ["."],
     },
   },
   { timestamps: true },

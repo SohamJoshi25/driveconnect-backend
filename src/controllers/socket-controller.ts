@@ -10,6 +10,7 @@ import { UserModel } from "../models/user-model.js";
 import { ChunkSchema, IChunk } from "../models/chunk-model.js";
 import { Types } from "mongoose";
 import { Socket, DefaultEventsMap } from "socket.io";
+import { getDriveFiles } from "../utils/drive-util.js";
 
 const CHUNK_SIZE = 20000;
 
@@ -27,7 +28,7 @@ export const OnFileChunk = async (data: IFileChunkData, callback: (response: { s
     }
 
     const fileMetadata = {
-      name: `${file.name}.${chunkIndex}`,
+      name: `${file._id}.${chunkIndex}`,
       parents: ["appDataFolder"],
     };
 
@@ -168,6 +169,11 @@ export const OnFileDownload = async (socket: Socket<DefaultEventsMap, DefaultEve
       }
 
       const drive = getDrive(refresh_token);
+      // const responseData = await drive.files.list({
+      //   spaces: "appDataFolder",
+      //   fields: "files(id, name, mimeType, size, createdTime, modifiedTime, parents, description)",
+      // });
+      // console.log(responseData.data.files);
       const response = await drive.files.get({ fileId: chunk.driveId, alt: "media" }, { responseType: "arraybuffer" });
       const fileBuffer = Buffer.from(response.data as ArrayBuffer);
 

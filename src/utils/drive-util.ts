@@ -6,6 +6,7 @@ export const getDriveFiles = async (refresh_token: string) => {
     spaces: "appDataFolder",
     fields: "files(id, name, mimeType, size, createdTime, modifiedTime, parents, description)",
   });
+  console.log(response.data.files);
   return response.data.files;
 };
 

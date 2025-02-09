@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
 import { google } from "googleapis";
-import mongoose, { Error } from "mongoose";
-
 //configs
 import { accountAuthUrl, userAuthUrl } from "../configs/google-auth-config.js";
 import { GOOGLE_REDIRECT_URL } from "../configs/constants-config.js";
