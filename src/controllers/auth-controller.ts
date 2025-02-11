@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { google } from "googleapis";
 //configs
 import { accountAuthUrl, userAuthUrl } from "../configs/google-auth-config.js";
-import { GOOGLE_REDIRECT_URL } from "../configs/constants-config.js";
+import { APP_DOMAIN, GOOGLE_REDIRECT_URL } from "../configs/constants-config.js";
 
 //models
 import { UserModel } from "../models/user-model.js";
@@ -62,7 +62,7 @@ export const userCallback = async (request: Request, response: Response): Promis
       user.name = data.name!;
       user.picture = data.picture!;
       const token = createJWT({ _id: user._id });
-      return response.status(200).json({ message: "success", token: token });
+      return response.status(300).redirect(APP_DOMAIN + "?token=" + token);
     } else {
       const userData = {
         googleId: data.id!,
@@ -89,7 +89,7 @@ export const userCallback = async (request: Request, response: Response): Promis
       newUser.save();
       const token = createJWT({ _id: newUser._id });
 
-      return response.status(200).json({ message: "success", token: token });
+      return response.status(300).redirect(APP_DOMAIN + "?token=" + token);
     }
   } catch (error) {
     return response.status(500).json({ message: "Error", error: JSON.stringify(error) });

@@ -33,7 +33,7 @@ export const folderNestedInfo = async (request: Request, response: Response): Pr
       return response.status(401).json({ message: "Unauthorized Access to folder" });
     }
 
-    const subFiles: IFile[] = [];
+    const subFiles: Partial<IFile>[] = [];
     const subFolders: IFolder[] = [];
 
     for (const subFolderId of folder.subFolders) {
@@ -46,7 +46,9 @@ export const folderNestedInfo = async (request: Request, response: Response): Pr
     for (const subFileId of folder.subFiles) {
       const subFile = await FileModel.findById(subFileId);
       if (subFile) {
-        subFiles.push(subFile);
+        const _file = { ...subFile } as any;
+        delete _file.chunks;
+        subFiles.push(_file);
       }
     }
 

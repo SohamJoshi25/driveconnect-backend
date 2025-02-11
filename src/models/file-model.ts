@@ -6,14 +6,14 @@ export interface IFile extends Document {
   _id: Types.ObjectId;
   userId: Types.ObjectId;
   parentFolderId: Types.ObjectId;
-  name: String;
-  extention: String;
-  size: Number;
+  name: string;
+  extention: string;
+  size: number;
   chunks: IChunk[];
-  chunkSize: Number;
-  downloadedAt?: String;
-  createdAt?: String;
-  updatedAt?: String;
+  chunkSize: number;
+  downloadedAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export const FileSchema = new Schema<IFile>(
