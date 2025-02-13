@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { FolderModel, IFolder } from "../models/folder-model.js"; // Adjust import based on your project structure
 import { FileModel, IFile } from "../models/file-model.js";
+import mongoose from "mongoose";
 
 export const folderInfo = async (request: Request, response: Response): Promise<any> => {
   try {
@@ -46,14 +47,32 @@ export const folderNestedInfo = async (request: Request, response: Response): Pr
     for (const subFileId of folder.subFiles) {
       const subFile = await FileModel.findById(subFileId);
       if (subFile) {
-        const _file = { ...subFile } as any;
-        delete _file.chunks;
+        const _file: Partial<IFile> = {
+          _id: subFile._id,
+          userId: subFile.userId,
+          parentFolderId: subFile.parentFolderId,
+          name: subFile.name,
+          extention: subFile.extention,
+          size: subFile.size,
+          chunkSize: subFile.chunkSize,
+          downloadedAt: subFile.downloadedAt,
+          createdAt: subFile.createdAt,
+          updatedAt: subFile.updatedAt,
+        };
         subFiles.push(_file);
       }
     }
 
-    const folder_data: any = folder;
+    const folder_data: any = {};
 
+    folder_data._id = folder._id;
+    folder_data.userId = folder.userId;
+    folder_data.parentFolderId = folder.parentFolderId;
+    folder_data.name = folder.name;
+    folder_data.size = folder.size;
+    folder_data.path = folder.path;
+    folder_data.createdAt = folder.createdAt;
+    folder_data.updatedAt = folder.updatedAt;
     folder_data.subFiles = subFiles;
     folder_data.subFolders = subFolders;
 
@@ -124,12 +143,19 @@ export const folderDelete = async (request: Request, response: Response): Promis
     if (folder.subFiles.length !== 0 || folder.subFolders.length !== 0) {
       return response.status(400).json({ message: "Cannot Delete Folder because its contents are not empty" });
     } else {
+
+      await FolderModel.findByIdAndUpdate(
+        folder.parentFolderId,
+        { $pull: { subFolders: new mongoose.Types.ObjectId(folder._id) } },
+        { new: true }
+      );
+
       await FolderModel.findByIdAndDelete(folderId);
+      
+
+      return response.status(200).json({ message: "Folder Deleted", folder: folder });
     }
 
-    return response.status(200).json({ message: "Folder Deleted", folder: folder });
-
-    // Your logic to delete folder
   } catch (error) {
     console.error(error);
     response.status(500).json({ error: error instanceof Error ? error.message : "Internal Server Error" });

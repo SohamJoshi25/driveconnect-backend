@@ -49,11 +49,18 @@ export const fileDelete = async (request: Request, response: Response): Promise<
       }
 
       const drive = getDrive(refresh_token);
+      try {
+        const response = await drive.files.delete({ fileId: chunk.driveId });
+        console.log("Deleted Chunk ", chunk.index)
+      } catch (error) {
+        console.log("Failed to Delete Chunk ", chunk.index)
+      }
 
-      const response = await drive.files.delete({ fileId: chunk.driveId });
     }
 
-    return response.status(200).json({ message: "Folder Deleted", file: file });
+    await FileModel.findByIdAndDelete(fileId);
+
+    return response.status(200).json({ message: "File Deleted", file: file });
 
     // Your logic to delete folder
   } catch (error) {

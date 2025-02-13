@@ -12,7 +12,7 @@ import { Types } from "mongoose";
 import { Socket, DefaultEventsMap } from "socket.io";
 import { getDriveFiles } from "../utils/drive-util.js";
 
-const CHUNK_SIZE = 20000;
+const CHUNK_SIZE = 1024*1024*50;
 
 export const OnFileChunk = async (data: IFileChunkData, callback: (response: { success: boolean; message?: string; error?: string }) => void) => {
   try {

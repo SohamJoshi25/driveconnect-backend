@@ -5,10 +5,11 @@ import express from "express";
 import { decodeBearerToken } from "../middlewares/token-middleware.js";
 
 //Controllers
-import { UserInfo } from "../controllers/user-controller.js";
+import { UserInfo, flushUserData } from "../controllers/user-controller.js";
 
 const router = express.Router();
 
 router.get("/info", decodeBearerToken, UserInfo);
+router.delete("/flushfiles", decodeBearerToken, flushUserData);
 
 export default router;
