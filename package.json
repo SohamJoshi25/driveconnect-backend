@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node dist/index.js",
-    "build": "tsc -p .",
+    "build": "npm install && tsc -p .",
     "dev": "tsc-watch --onSuccess \"npm start\""
   },
   "repository": {
