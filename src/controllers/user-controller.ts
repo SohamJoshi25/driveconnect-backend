@@ -26,6 +26,7 @@ export const flushUserData = async (request: Request, response: Response): Promi
 
     for(const account of accounts){
       await deleteDriveFiles(account.refreshToken);
+      await AccountModel.findByIdAndDelete(account._id.toString());
       console.log("Deleted Account ", account._id);
     }
 
@@ -39,6 +40,31 @@ export const flushUserData = async (request: Request, response: Response): Promi
       { userId: userId, name: "root" },
       { $set: { subFiles: [], subFolders: [] } }
     );
+
+    return response.status(200).json({ message: "Success"});
+  } catch (error) {
+    console.error(error);
+    return response.status(500).json({ error: error instanceof Error ? error.message : "Internal Server Error" });
+  }
+};
+
+export const deleteUser = async (request: Request, response: Response): Promise<any> => {
+  try {
+    const userId = request.session.userId;
+    
+    const accounts:IAccount[] = await AccountModel.find({userId:userId});
+
+
+    for(const account of accounts){
+      await deleteDriveFiles(account.refreshToken);
+      await AccountModel.findByIdAndDelete(account._id.toString());
+      console.log("Deleted Account ", account._id);
+    }
+
+    const files = await FileModel.deleteMany({userId:userId})
+    await FolderModel.deleteMany({userId: userId});
+    await UserModel.deleteOne({_id:userId})
+
 
     return response.status(200).json({ message: "Success"});
   } catch (error) {

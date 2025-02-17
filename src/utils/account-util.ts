@@ -20,7 +20,7 @@ type IAccountRefreshToken = {
 
 export const getRefreshTokens = async (userId: Types.ObjectId): Promise<IAccountRefreshToken[]> => {
   const Accounts: IAccount[] = await AccountModel.find({ userId: userId });
-  if (Accounts.length === 0) throw new Error("No Accounts Found");
+  if (Accounts.length === 0) return [];
   let AccountRefreshToken: IAccountRefreshToken[] = new Array();
   await Promise.all(
     Accounts.map(async (account) => {

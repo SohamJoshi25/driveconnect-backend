@@ -51,7 +51,6 @@ export const fileDelete = async (request: Request, response: Response): Promise<
       const drive = getDrive(refresh_token);
       try {
         const response = await drive.files.delete({ fileId: chunk.driveId });
-        console.log("Deleted Chunk ", chunk.index)
       } catch (error) {
         console.log("Failed to Delete Chunk ", chunk.index)
       }

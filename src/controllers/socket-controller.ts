@@ -98,6 +98,12 @@ export const OnFileUploadStart = async (data: IFileUploadStartData, callback: (r
     const refresh_token_data: { refresh_token: string; index: number; accountId: Types.ObjectId }[] = new Array();
     console.log(AccountRefreshToken,parentFolderId);
 
+    if(AccountRefreshToken.length==0){
+      callback({success:false,error:"Please add a drive account first"});
+      return;
+  }
+
+
     AccountRefreshToken.forEach((account, idx) => {
       refresh_token_data.push({
         //FIXME: Should Validate all Drive has Space hence we have storageQuota in accountRefreshToken
