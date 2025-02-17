@@ -4,6 +4,7 @@ import mongoose, { Document, Schema, Model, Types } from "mongoose";
 export interface IAccount extends Document {
   _id: Types.ObjectId;
   email: string;
+  picture: Base64URLString;
   userId: Types.ObjectId;
   accessToken: string;
   refreshToken: string;
@@ -19,6 +20,10 @@ export const AccountSchema = new Schema<IAccount>(
       type: mongoose.SchemaTypes.String,
       required: true,
       unique: true,
+    },
+    picture: {
+      type: mongoose.SchemaTypes.String,
+      required: true,
     },
     userId: {
       type: mongoose.SchemaTypes.ObjectId,

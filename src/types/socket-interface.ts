@@ -5,7 +5,7 @@ export interface IFileUploadStartData {
   name: string;
   extention: string;
   size: number;
-  parentFolderId?: Types.ObjectId;
+  parentFolderId?: string;
 }
 
 export interface IFileChunkData {

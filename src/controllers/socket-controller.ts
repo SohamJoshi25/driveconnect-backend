@@ -1,5 +1,5 @@
 import { Readable } from "stream";
-import { FileModel } from "../models/file-model.js";
+import { FileModel, IFile } from "../models/file-model.js";
 import { IChunkJWT, IFileChunkData, IFileDownload, IFileUploadStartData } from "../types/socket-interface.js";
 import { createJWT, verifyJWT } from "../utils/jwt-util.js";
 import { getRefreshTokens } from "../utils/account-util.js";
@@ -8,11 +8,13 @@ import { AccountModel } from "../models/account-model.js";
 import { FolderModel } from "../models/folder-model.js";
 import { UserModel } from "../models/user-model.js";
 import { ChunkSchema, IChunk } from "../models/chunk-model.js";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { Socket, DefaultEventsMap } from "socket.io";
 import { getDriveFiles } from "../utils/drive-util.js";
 
-const CHUNK_SIZE = 1024*1024*50;
+const CHUNK_SIZE_50 = 1024*1024*50;
+const CHUNK_SIZE_10 = 1024*1024*10;
+const CHUNK_SIZE_1 = 1024*1024;
 
 export const OnFileChunk = async (data: IFileChunkData, callback: (response: { success: boolean; message?: string; error?: string }) => void) => {
   try {
@@ -82,18 +84,19 @@ export const OnFileChunk = async (data: IFileChunkData, callback: (response: { s
   }
 };
 
-export const OnFileUploadStart = async (data: IFileUploadStartData, callback: (response: { success: boolean; token?: string; error?: string; chunk_size?: number }) => void) => {
+export const OnFileUploadStart = async (data: IFileUploadStartData, callback: (response: { success: boolean; token?: string; error?: string; chunk_size?: number, file?:IFile }) => void) => {
   try {
     console.log("Started");
     console.log(data);
     const userId = verifyJWT(data.token)._id;
     const user = await UserModel.findById(userId);
     const AccountRefreshToken = await getRefreshTokens(userId);
+    const CHUNK_SIZE = (data.size>(CHUNK_SIZE_50*10) ? CHUNK_SIZE_50 : data.size>(CHUNK_SIZE_10*10) ? CHUNK_SIZE_10 : CHUNK_SIZE_1 );
     const totalChunkCount = Math.ceil(data.size / CHUNK_SIZE);
     const chunkCountPerAccount = Math.floor(totalChunkCount / AccountRefreshToken.length);
-    const parentFolderId = data.parentFolderId ?? user!.rootFolderId!;
+    const parentFolderId = data.parentFolderId ? new mongoose.Types.ObjectId(data.parentFolderId) : user!.rootFolderId!;
     const refresh_token_data: { refresh_token: string; index: number; accountId: Types.ObjectId }[] = new Array();
-    console.log(AccountRefreshToken);
+    console.log(AccountRefreshToken,parentFolderId);
 
     AccountRefreshToken.forEach((account, idx) => {
       refresh_token_data.push({
@@ -118,7 +121,7 @@ export const OnFileUploadStart = async (data: IFileUploadStartData, callback: (r
     const token = createJWT({ refresh_token_data, fileId: file._id });
     console.log(token);
 
-    callback({ success: true, token: token, chunk_size: CHUNK_SIZE });
+    callback({ success: true, token: token, chunk_size: CHUNK_SIZE, file:file });
   } catch (error) {
     console.log(error);
     callback({ success: false, error: JSON.stringify(error) });

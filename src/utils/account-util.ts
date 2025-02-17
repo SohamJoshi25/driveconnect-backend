@@ -1,8 +1,7 @@
-import { response } from "express";
+import axios from "axios";
 import { getDrive } from "../configs/google-auth-config.js";
 import { IAccount, AccountModel, AccountSchema } from "../models/account-model.js";
 import { Types } from "mongoose";
-import { drive_v3 } from "googleapis";
 
 type storageQuota =
   | {
@@ -36,4 +35,17 @@ export const getRefreshTokens = async (userId: Types.ObjectId): Promise<IAccount
     }),
   );
   return AccountRefreshToken;
+};
+
+
+export const base64Image = async (url:string) : Promise<string> => {
+  const response = await axios.get(url, {
+      responseType: 'arraybuffer'
+  });
+
+  const base64Image = Buffer.from(response.data).toString('base64');
+
+  const mimeType = response.headers['content-type'] || 'image/png';
+
+  return `data:${mimeType};base64,${base64Image}`
 };

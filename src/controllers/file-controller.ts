@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { FolderModel, IFolder } from "../models/folder-model.js"; // Adjust import based on your project structure
 import { FileModel, IFile } from "../models/file-model.js";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { AccountModel } from "../models/account-model.js";
 import { getDrive } from "../configs/google-auth-config.js";
 
@@ -58,6 +58,12 @@ export const fileDelete = async (request: Request, response: Response): Promise<
 
     }
 
+    await FolderModel.findByIdAndUpdate(
+      file.parentFolderId,
+      { $pull: { subFiles: new mongoose.Types.ObjectId(file._id ) } },
+      { new: true }
+    );
+    
     await FileModel.findByIdAndDelete(fileId);
 
     return response.status(200).json({ message: "File Deleted", file: file });

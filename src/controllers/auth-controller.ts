@@ -7,13 +7,16 @@ import { APP_DOMAIN, GOOGLE_REDIRECT_URL } from "../configs/constants-config.js"
 //models
 import { UserModel } from "../models/user-model.js";
 import { AccountModel } from "../models/account-model.js";
+import { FolderModel } from "../models/folder-model.js";
 
 //Utils
 import { createJWT, verifyJWT } from "../utils/jwt-util.js";
 
 //Packages
 import url from "url";
-import { FolderModel } from "../models/folder-model.js";
+import { Buffer } from "buffer";
+import { base64Image } from "../utils/account-util.js";
+
 
 export const userLogin = async (request: Request, response: Response): Promise<any> => {
   try {
@@ -57,13 +60,19 @@ export const userCallback = async (request: Request, response: Response): Promis
 
     const user = await UserModel.findOne({ email: data.email });
 
+    data.picture = await base64Image(data.picture!);
+
     if (user) {
+
       user.googleId = data.id!;
       user.name = data.name!;
       user.picture = data.picture!;
       const token = createJWT({ _id: user._id });
+      await user.save();
       return response.status(300).redirect(APP_DOMAIN + "?token=" + token);
+
     } else {
+
       const userData = {
         googleId: data.id!,
         email: data.email!,
@@ -114,6 +123,8 @@ export const accountCallback = async (request: Request, response: Response): Pro
     const oauth2 = google.oauth2({ version: "v2", auth: oauth2client });
     const { data } = await oauth2.userinfo.get(); // Fetch user info
 
+    data.picture = await base64Image(data.picture!);
+
     const user = await UserModel.findById(request.session.userId);
 
     if (!user) {
@@ -123,11 +134,11 @@ export const accountCallback = async (request: Request, response: Response): Pro
     const prevAccount = await AccountModel.findOne({ email: data.email });
 
     if (!prevAccount) {
-      const account = new AccountModel({ email: data.email, accessToken: tokens.access_token, refreshToken: tokens.refresh_token, expiresAt: tokens.expiry_date, scope: tokens.scope?.split(" "), userId: user._id });
+      const account = new AccountModel({ email: data.email, accessToken: tokens.access_token, refreshToken: tokens.refresh_token, expiresAt: tokens.expiry_date, scope: tokens.scope?.split(" "), userId: user._id , picture:data.picture});
       await account.save();
     } else {
       if (prevAccount.userId.toString() === request.session.userId) {
-        await AccountModel.findByIdAndUpdate(prevAccount._id, { email: data.email, accessToken: tokens.access_token, refreshToken: tokens.refresh_token, expiresAt: tokens.expiry_date, scope: tokens.scope?.split(" "), userId: user._id });
+        await AccountModel.findByIdAndUpdate(prevAccount._id, { email: data.email, accessToken: tokens.access_token, refreshToken: tokens.refresh_token, expiresAt: tokens.expiry_date, scope: tokens.scope?.split(" "), userId: user._id , picture:data.picture });
         return response.status(300).redirect(APP_DOMAIN);
       } else {
         return response.status(409).json({ message: "Account already registered in Drive", email: data.email });
