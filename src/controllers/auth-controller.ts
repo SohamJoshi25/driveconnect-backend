@@ -21,6 +21,7 @@ import { base64Image } from "../utils/account-util.js";
 export const userLogin = async (request: Request, response: Response): Promise<any> => {
   try {
     request.session.operation = "userLogin";
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     return response.status(302).redirect(userAuthUrl);
   } catch (error) {
     return response.status(500).json({ message: "Error" });
@@ -37,6 +38,9 @@ export const accountLogin = async (request: Request, response: Response): Promis
 
     request.session.userId = decoded._id;
     request.session.operation = "accountLogin";
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    
     return response.status(302).redirect(accountAuthUrl);
   } catch (error) {
     return response.status(500).json({ message: "Error" });
