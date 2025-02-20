@@ -14,7 +14,6 @@ import { createJWT, verifyJWT } from "../utils/jwt-util.js";
 
 //Packages
 import url from "url";
-import { Buffer } from "buffer";
 import { base64Image } from "../utils/account-util.js";
 
 
